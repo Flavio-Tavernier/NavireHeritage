@@ -181,6 +181,10 @@ public class Port implements IStationable {
 
 	public void setNbQuais(Navire navire) {
 		if (estAttendu(navire.getImo())) {
+			this.naviresAttendus.remove(navire.getImo());
+			this.naviresArrives.put(navire.getImo(), navire);
+		}
+		else {
 
 		}
 	}
