@@ -135,79 +135,58 @@ public class Port implements IStationable {
 	public void enregistrerArrivee(Object vehicule) throws GestionPortException {
 		Navire navire = ((Navire) vehicule);
 		String imoNavire = navire.getImo();
-
-		if (this.estPresent(imoNavire)) {
-			throw new GestionPortException("Navire deja present");
-		}
+		
+		if (this.estAttendu(imoNavire) || !this.estPresent(imoNavire)) {
+			this.gererArriveeNavire(navire);
+		} 
 		else {
-			if (this.estAttendu(imoNavire)) {
-				if (navire instanceof Croisiere) {
-					this.naviresAttendus.remove(imoNavire);
-					this.naviresArrives.put(imoNavire, navire);
-				}
-				else if (navire instanceof Cargo) {
-					if (this.getNbPortique()) {
-
-					}
-					else {
-						naviresEnAttentes.put(imoNavire, navire);
-					}
-				}
-				else if (navire instanceof Tanker) {
-					if (navire.getTonnageGT() <= 130000) {
-						if (this.getNbtankers()) {
-
-						}
-						else {
-							naviresEnAttentes.put(imoNavire, navire);
-						}
-					}
-					else {
-						if (this.getNbQuaisSuperTanker()) {
-
-						}
-						else {
-							naviresEnAttentes.put(imoNavire, navire);
-						}
-					}
-				}
-
-			}
-			else {
-
-			}
+			throw new GestionPortException("Navire deja arrive ou pas attendu");
 		}
+
 	}
-
-	public void setNbQuais(Navire navire) {
-		if (estAttendu(navire.getImo())) {
-			this.naviresAttendus.remove(navire.getImo());
-			this.naviresArrives.put(navire.getImo(), navire);
-		}
-		else {
-
-		}
-	}
-
-	public String getInstanceOfNavire(Navire navire) {
+	
+	
+	public void gererArriveeNavire(Navire navire) {
 		if (navire instanceof Croisiere) {
-			return "Croisiere";
+			gererCroisiere(navire);	
 		}
 		else if (navire instanceof Cargo) {
-			return "Cargo";
+			gererCargo(navire);
 		}
-		else if (navire instanceof  Tanker) {
-			if (navire.getTonnageGT() <= 130000) {
-				return "tanker";
-			}
-			else {
-				return "SuperTanker";
-			}
+		else if (navire instanceof Tanker) {
+			gererTanker(navire);
 		}
-		return "";
 	}
+	
+	
+	public void gererCroisiere(Navire navire) {
+		changementEtatNavire(navire);
+	}
+	
+	public void gererCargo(Navire navire) {
+		changementEtatNavire(navire);
+	}
+	
+	public void gererTanker(Navire navire) {
+		if (navire.getTonnageGT() <= 130000) {
+			changementEtatNavire(navire);
+		}
+		else {
+			changementEtatNavire(navire);
+		}
+	}
+	
+	
+	public void changementEtatNavire(Navire navire) {
+		this.naviresAttendus.remove(navire.getImo());
+		this.naviresArrives.put(navire.getImo(), navire);
+	}
+	
+	
+	
+	
 
-
+	
 	@Override
 	public void enregistrerDepart(String idNavire) throws GestionPortException {
 		Navire navire = this.naviresArrives.get(idNavire);
