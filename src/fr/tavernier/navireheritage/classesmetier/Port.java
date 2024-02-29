@@ -131,6 +131,12 @@ public class Port implements IStationable {
 		}
 	}
 
+	
+	
+	
+	
+	
+	
 	@Override
 	public void enregistrerArrivee(Object vehicule) throws GestionPortException {
 		Navire navire = ((Navire) vehicule);
@@ -147,37 +153,65 @@ public class Port implements IStationable {
 	public void gererArriveeNavire(Navire navire) {
 		if (navire instanceof Croisiere) {
 			gererCroisiere(navire);
-		} else if (navire instanceof Cargo) {
-			gererCargo(navire);
-		} else if (navire instanceof Tanker) {
-			gererTanker(navire);
+		} 
+		else {
+			gererNavireCommercable(navire);
 		}
 	}
 
 	public void gererCroisiere(Navire navire) {
 		changementEtatNavire(navire);
 	}
-
-	public void gererCargo(Navire navire) {
-		changementEtatNavire(navire);
-	}
-
-	public void gererTanker(Navire navire) {
-		if (navire.getTonnageGT() <= 130000) {
-			if (this.getNbtankers() < this.nbQuaisTanker) {
-				changementEtatNavire(navire);
-			}
-		} else {
-			if (this.getNbSuperTankers() < this.nbQuaisTanker) {
-				changementEtatNavire(navire);
-			}
+	
+	public void gererNavireCommercable(Navire navire) {
+		if (navire instanceof Cargo) {
+			this.gererCargo(navire);
+		}
+		else {
+			this.gererTypeTanker(navire);
 		}
 	}
+
+	public void gererCargo(Navire navire) {
+		if (this.getNbCargos() < this.nbQuaisTanker) {
+			changementEtatNavire(navire);
+		}
+	}
+
+	public void gererTypeTanker(Navire navire) {
+		if (navire.getTonnageGT() <= 130000) {
+			this.gererTanker(navire);
+		} 
+		else {
+			this.gererSuperTanker(navire);
+		}
+	}
+	
+	public void gererTanker(Navire navire) {
+		if (this.getNbtankers() < this.nbQuaisTanker) {
+			changementEtatNavire(navire);
+		}
+	}
+	
+public void gererSuperTanker(Navire navire) {
+		if (this.getNbSuperTankers() < this.nbQuaisTanker) {
+			changementEtatNavire(navire);
+		}
+	}
+
 
 	public void changementEtatNavire(Navire navire) {
 		this.naviresAttendus.remove(navire.getImo());
 		this.naviresArrives.put(navire.getImo(), navire);
 	}
+	
+	
+	
+	
+	
+	
+	
+	
 
 	@Override
 	public void enregistrerDepart(String idNavire) throws GestionPortException {
