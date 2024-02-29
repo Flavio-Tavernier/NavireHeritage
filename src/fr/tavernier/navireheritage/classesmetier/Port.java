@@ -36,9 +36,9 @@ public class Port implements IStationable {
 				+ "\n\tNb quais tankers : " + this.nbQuaisTanker + "\n\tNb quais super tankers : "
 				+ this.nbQuaisSuperTanker + "\n\tNb Navires a quai : " + this.naviresArrives.size()
 				+ "\n\tNb Navires attendus : " + this.naviresAttendus.size() + "\n\tNb Navires  partis : "
-				+ this.naviresPartis.size() + "\n\tNb Navires En Attente : " + this.naviresEnAttentes.size()
-				+ "\n\nNombre De Cargos dans le port : " + this.getNbCargos() + "\nNombre De tankers dans le port : "
-				+ this.getNbtankers() + "\nNombre De tankers dans le port : " + this.getNbSuperTankers() + "\n";
+				+ this.naviresPartis.size() + "\n\tNb Navires En Attente : " + this.naviresEnAttentes.size() + "\n\nNombre de croisiere dans le port " + this.getNbCroisieres() 
+				+ "\nNombre De Cargos dans le port : " + this.getNbCargos() + "\nNombre De tankers dans le port : "
+				+ this.getNbtankers() + "\nNombre De super tankers dans le port : " + this.getNbSuperTankers() + "\n";
 	}
 
 	public void dechargement(String idNavire, int qte) {
@@ -86,6 +86,19 @@ public class Port implements IStationable {
 			throw new GestionPortException("id de navire parti inconnu");
 		}
 	}
+	
+	public int getNbCroisieres() {
+		int compteurCroisieres = 0;
+
+		for (Navire navire : naviresArrives.values()) {
+			if (navire instanceof Croisiere) {
+				compteurCroisieres++;
+			}
+		}
+		return compteurCroisieres;
+	}
+	
+	
 
 	public int getNbCargos() {
 		int compteurCargos = 0;
@@ -119,6 +132,7 @@ public class Port implements IStationable {
 		return compteurSuperTankers;
 	}
 
+	
 	@Override
 	public void enregistrerArriveePrevue(Object vehicule) throws GestionPortException {
 		if (vehicule instanceof Navire) {

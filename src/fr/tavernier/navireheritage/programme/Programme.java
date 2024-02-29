@@ -13,11 +13,10 @@ public class Programme {
 
 		Test.chargementInitial(port);
 		
-		Test.testEnregistrerArriveePrevue(port,new Cargo("IMO9780859","CMA CGM A. LINCOLN","43.43279 N","134.76258 W", 140872,148992,123000,"marchandises diverses"));
-		
 		try {
 			Test.testEnregistrerArrivee(port, port.getUnAttendu("IMO9241061"));
-			//Test.testEnregistrerArrivee(port, "IMO0000000");
+			Test.testEnregistrerArrivee(port, port.getUnAttendu("IMO0000000"));
+			Test.testEnregistrerArrivee(port, port.getUnAttendu("IMO9241061"));
 		} catch (GestionPortException e) {
 			System.out.println(e.getMessage());
 		}
