@@ -204,7 +204,6 @@ public class Port implements IStationable {
 		} else {
 			throw new GestionPortException("Le navire n'est pas present dans le port");
 		}
-
 		// Navire navire = this.naviresArrives.get(imoNavire);
 		// this.changementEtatNavire(navire);
 	}
