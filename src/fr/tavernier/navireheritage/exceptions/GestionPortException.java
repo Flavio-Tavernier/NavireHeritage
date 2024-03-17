@@ -4,10 +4,10 @@ import java.time.format.DateTimeFormatter;
 
 public class GestionPortException extends Exception {
 	
-	DateTimeFormatter dateHeureActuel = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"); 
+
 	
 	public GestionPortException(String message) {
-		super("Erreur le dateHeureActuel\n" + message);
+		super("Erreur le 16/03/2024\n" + message + "\n");
 	}
 	
 

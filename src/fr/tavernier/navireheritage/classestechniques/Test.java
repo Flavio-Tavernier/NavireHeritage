@@ -15,7 +15,7 @@ public abstract class Test {
 			port.enregistrerArriveePrevue(new Cargo("IMO9780859", "CMA CGM A. LINCOLN", "43.43279 N", "134.76258 W",
 					140872, 148992, 123000, "marchandises diverses"));
 			port.enregistrerArriveePrevue(new Cargo("IMO9250098", "CONTAINERSHIPS VII", "54.35412 N", "5.3644 E", 10499,
-					13965, 11000, "Matériel de loisirs"));
+					13965, 11000, "Matï¿½riel de loisirs"));
 			port.enregistrerArriveePrevue(new Cargo("IMO9502910", "MAERSK EMERALD", "54.72202 N", "170.54304 W", 141754,
 					141189, 137000, "marchandises diverses"));
 			//croisiere
@@ -62,6 +62,14 @@ public abstract class Test {
 			System.out.println(e.getMessage());
 		}
 	}
+
+	public static void testEnregistrerDepart(Port port, String idNavire) {
+		try {
+			port.enregistrerDepart(idNavire);
+		} catch (GestionPortException e) {
+			System.out.println(e.getMessage());
+        }
+    }
 	
 	
 	

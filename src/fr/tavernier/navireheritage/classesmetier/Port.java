@@ -36,7 +36,8 @@ public class Port implements IStationable {
 				+ "\n\tNb quais tankers : " + this.nbQuaisTanker + "\n\tNb quais super tankers : "
 				+ this.nbQuaisSuperTanker + "\n\tNb Navires a quai : " + this.naviresArrives.size()
 				+ "\n\tNb Navires attendus : " + this.naviresAttendus.size() + "\n\tNb Navires  partis : "
-				+ this.naviresPartis.size() + "\n\tNb Navires En Attente : " + this.naviresEnAttentes.size() + "\n\nNombre de croisiere dans le port " + this.getNbCroisieres() 
+				+ this.naviresPartis.size() + "\n\tNb Navires En Attente : " + this.naviresEnAttentes.size()
+				+ "\n\nNombre de croisiere dans le port " + this.getNbCroisieres()
 				+ "\nNombre De Cargos dans le port : " + this.getNbCargos() + "\nNombre De tankers dans le port : "
 				+ this.getNbtankers() + "\nNombre De super tankers dans le port : " + this.getNbSuperTankers() + "\n";
 	}
@@ -51,6 +52,7 @@ public class Port implements IStationable {
 
 	private void ajoutNavireEnAttente(Navire navire) {
 		this.naviresEnAttentes.put(navire.getImo(), navire);
+		this.naviresAttendus.remove(navire.getImo());
 	}
 
 	public boolean estEnAttente(String idNavire) {
@@ -150,10 +152,10 @@ public class Port implements IStationable {
 		Navire navire = ((Navire) vehicule);
 		String imoNavire = navire.getImo();
 
-		if (this.estAttendu(imoNavire) || !this.estPresent(imoNavire)) {
+		if (this.estAttendu(imoNavire) && !this.estPresent(imoNavire)) {
 			this.gererArriveeNavire(navire);
 		} else {
-			throw new GestionPortException("Navire deja arrive ou pas attendu");
+			throw new GestionPortException("Le navire " + imoNavire + " est deja arrive ou pas attendu");
 		}
 
 	}
@@ -182,6 +184,9 @@ public class Port implements IStationable {
 		if (this.getNbCargos() < this.nbQuaisTanker) {
 			changementEtatNavire(navire);
 		}
+		else {
+			this.ajoutNavireEnAttente(navire);
+		}
 	}
 
 	public void gererTypeTanker(Navire navire) {
@@ -196,11 +201,17 @@ public class Port implements IStationable {
 		if (this.getNbtankers() < this.nbQuaisTanker) {
 			changementEtatNavire(navire);
 		}
+		else {
+			this.ajoutNavireEnAttente(navire);
+		}
 	}
 
 	public void gererSuperTanker(Navire navire) {
-		if (this.getNbSuperTankers() < this.nbQuaisTanker) {
+		if (this.getNbSuperTankers() < this.nbQuaisSuperTanker) {
 			changementEtatNavire(navire);
+		}
+		else {
+			this.ajoutNavireEnAttente(navire);
 		}
 	}
 
@@ -216,11 +227,44 @@ public class Port implements IStationable {
 			this.naviresArrives.remove(idNavire);
 			this.naviresPartis.put(idNavire, navire);
 		} else {
-			throw new GestionPortException("Le navire n'est pas present dans le port");
+			throw new GestionPortException("Impossible d'enregistrer le départ, " +
+					"le navire " + idNavire + " n'est pas present dans le port");
+		}
+
+		if (this.naviresEnAttentes.size() > 0) {
+			gererNavireEnAttente(navire);
 		}
 		// Navire navire = this.naviresArrives.get(imoNavire);
 		// this.changementEtatNavire(navire);
 	}
+	
+
+	public void gererNavireEnAttente(Navire navire) {
+		if (navire instanceof Cargo) {
+			gererCargoEnAttente();
+		} else if (navire instanceof Tanker) {
+			gererTankerEnAttente();
+		}
+
+	}
+
+	public void gererCargoEnAttente() {
+		for (Navire navire : this.naviresEnAttentes.values()) {
+			if (navire instanceof Cargo) {
+				gererArriveeNavire(navire);
+			}
+		}
+	}
+
+	public void gererTankerEnAttente() {
+		for (Navire navire : this.naviresEnAttentes.values()) {
+			if (navire instanceof Tanker) {
+				gererArriveeNavire(navire);
+				//his.naviresEnAttentes.remove(navire.getImo(), navire);
+			}
+		}
+	}
+
 
 	@Override
 	public boolean estAttendu(String idNavire) {
@@ -242,7 +286,7 @@ public class Port implements IStationable {
 		if (this.estAttendu(idNavire)) {
 			return this.naviresAttendus.get(idNavire);
 		} else {
-			throw new GestionPortException("Ce navire n'est pas dans la liste des attendus");
+			throw new GestionPortException("Le navire " + idNavire + " n'est pas dans la liste des attendus");
 		}
 	}
 
