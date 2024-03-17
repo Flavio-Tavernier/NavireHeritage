@@ -251,6 +251,7 @@ public class Port implements IStationable {
 	public void gererCargoEnAttente() {
 		for (Navire navire : this.naviresEnAttentes.values()) {
 			if (navire instanceof Cargo) {
+				this.naviresEnAttentes.remove(navire.getImo(), navire);
 				gererArriveeNavire(navire);
 			}
 		}
@@ -259,8 +260,8 @@ public class Port implements IStationable {
 	public void gererTankerEnAttente() {
 		for (Navire navire : this.naviresEnAttentes.values()) {
 			if (navire instanceof Tanker) {
+				this.naviresEnAttentes.remove(navire.getImo(), navire);
 				gererArriveeNavire(navire);
-				//his.naviresEnAttentes.remove(navire.getImo(), navire);
 			}
 		}
 	}
