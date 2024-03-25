@@ -1,9 +1,11 @@
 package fr.tavernier.navireheritage.classesmetier;
 
+import fr.tavernier.navireheritage.interfaces.ICroiserable;
+
 import java.util.HashMap;
 import java.util.Vector;
 
-public class Croisiere extends Navire {
+public class Croisiere extends Navire implements ICroiserable {
 	private char typeNavireCroisiere;
 	private int nbPassagerMaxi;
 	private HashMap<String, Passager> passagers = new HashMap<String, Passager>();
@@ -25,8 +27,6 @@ public class Croisiere extends Navire {
 		passagers.forEach(passager -> this.passagers.put(passager.getNumPasseport(), passager));
 	}
 
-
-	
 	
 	public char getTypeNavireCroisiere() {
 		return this.typeNavireCroisiere;
@@ -39,7 +39,15 @@ public class Croisiere extends Navire {
 	public HashMap<String, Passager> getPassagers() {
 		return this.passagers;
 	}
-	
+
+
+	public void embarquer(Vector<Object> navire) {
+
+	}
+
+	public void debarquer(Vector<Object> navire) {
+
+	}
 
 
 }

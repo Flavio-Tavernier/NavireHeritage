@@ -259,6 +259,18 @@ public class Port implements IStationable {
 
 	public void gererTankerEnAttente() {
 		for (Navire navire : this.naviresEnAttentes.values()) {
+			if (navire instanceof Tanker && navire.getTonnageGT() <= 130000) {
+				this.naviresEnAttentes.remove(navire.getImo(), navire);
+				gererArriveeNavire(navire);
+			}
+			else {
+				gererSuperTankerEnAttente();
+			}
+		}
+	}
+
+	public void gererSuperTankerEnAttente() {
+		for (Navire navire : this.naviresEnAttentes.values()) {
 			if (navire instanceof Tanker) {
 				this.naviresEnAttentes.remove(navire.getImo(), navire);
 				gererArriveeNavire(navire);

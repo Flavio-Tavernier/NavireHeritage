@@ -53,10 +53,18 @@ public class Programme {
                296370, 265400, "rude Oil Tanker");
         Test.testEnregistrerArrivee(port,superTankeranker4);
 
+        Tanker superTankeranker5 = new Tanker("6", "NEW DRAGON", "26.94883 N", "50.20617 E", 156726,
+                296370, 265400, "rude Oil Tanker");
+        Test.testEnregistrerArrivee(port,superTankeranker5);
+
+        Tanker superTankeranker6 = new Tanker("7", "NEW DRAGON", "26.94883 N", "50.20617 E", 156726,
+                296370, 265400, "rude Oil Tanker");
+        Test.testEnregistrerArrivee(port,superTankeranker6);
+
 
         Test.testEnregistrerDepart(port,"IMO9241061");
 
-        Test.testEnregistrerDepart(port, "IMO9379715");
+        //Test.testEnregistrerDepart(port, "IMO9379715");
 
         Test.testEnregistrerDepart(port, "IMO9334076");
 
