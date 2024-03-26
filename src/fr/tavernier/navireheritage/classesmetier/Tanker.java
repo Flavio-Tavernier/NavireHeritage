@@ -30,5 +30,9 @@ public class Tanker extends Navire implements INavCommercable {
 	public void setTypeFluide(String typeFluide) {
 		this.typeFluide = typeFluide;
 	}
+	
+	public boolean estSuperTanker() {
+		return this.getTonnageGT() > 130000;
+	}
 
 }

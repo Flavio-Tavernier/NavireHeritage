@@ -1,6 +1,9 @@
 package fr.tavernier.navireheritage.classesmetier;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 
 import fr.tavernier.navireheritage.exceptions.GestionPortException;
 import fr.tavernier.navireheritage.interfaces.IStationable;
@@ -14,10 +17,10 @@ public class Port implements IStationable {
 	private int nbQuaisCroisiere;
 	private int nbQuaisSuperTanker;
 	private int nbQuaisPassager;
-	private HashMap<String, Navire> naviresAttendus = new HashMap<>();
-	private HashMap<String, Navire> naviresArrives = new HashMap<>();
-	private HashMap<String, Navire> naviresPartis = new HashMap<>();
-	private HashMap<String, Navire> naviresEnAttentes = new HashMap<>();
+	private Map<String, Navire> naviresAttendus = new ConcurrentHashMap<>();
+	private Map<String, Navire> naviresArrives = new ConcurrentHashMap<>();
+	private Map<String, Navire> naviresPartis = new ConcurrentHashMap<>();
+	private Map<String, Navire> naviresEnAttentes = new ConcurrentHashMap<>();
 
 	public Port(String nom, String latitude, String longitude, int nbPortique, int nbQuaisCroisiere, int nbQuaisTanker,
 			int nbQuaisSuperTanker) {
@@ -37,7 +40,7 @@ public class Port implements IStationable {
 				+ this.nbQuaisSuperTanker + "\n\tNb Navires a quai : " + this.naviresArrives.size()
 				+ "\n\tNb Navires attendus : " + this.naviresAttendus.size() + "\n\tNb Navires  partis : "
 				+ this.naviresPartis.size() + "\n\tNb Navires En Attente : " + this.naviresEnAttentes.size()
-				+ "\n\nNombre de croisiere dans le port " + this.getNbCroisieres()
+				+ "\n\nNombre De Croisieres dans le port " + this.getNbCroisieres()
 				+ "\nNombre De Cargos dans le port : " + this.getNbCargos() + "\nNombre De tankers dans le port : "
 				+ this.getNbtankers() + "\nNombre De super tankers dans le port : " + this.getNbSuperTankers() + "\n";
 	}
@@ -56,11 +59,7 @@ public class Port implements IStationable {
 	}
 
 	public boolean estEnAttente(String idNavire) {
-		if (this.naviresEnAttentes.containsKey(idNavire)) {
-			return true;
-		} else {
-			return false;
-		}
+		return this.naviresEnAttentes.containsKey(idNavire);
 	}
 
 	public Navire getUnAttente(String idNavire) throws GestionPortException {
@@ -127,7 +126,6 @@ public class Port implements IStationable {
 		int compteurSuperTankers = 0;
 		for (Navire navire : naviresArrives.values()) {
 			if (navire instanceof Tanker && navire.getTonnageGT() > 130000) {
-
 				compteurSuperTankers++;
 			}
 		}
@@ -155,7 +153,7 @@ public class Port implements IStationable {
 		if (this.estAttendu(imoNavire) && !this.estPresent(imoNavire)) {
 			this.gererArriveeNavire(navire);
 		} else {
-			throw new GestionPortException("Le navire " + imoNavire + " est deja arrive ou pas attendu");
+			throw new GestionPortException("Le navire " + imoNavire + " est deja arrive ou n'est pas attendu");
 		}
 
 	}
@@ -220,63 +218,98 @@ public class Port implements IStationable {
 		this.naviresArrives.put(navire.getImo(), navire);
 	}
 
+	
+	
+	
 	@Override
 	public void enregistrerDepart(String idNavire) throws GestionPortException {
 		Navire navire = this.naviresArrives.get(idNavire);
-		if (this.naviresArrives.containsKey(idNavire)) {
+		if (this.estPresent(idNavire)) {
 			this.naviresArrives.remove(idNavire);
 			this.naviresPartis.put(idNavire, navire);
 		} else {
-			throw new GestionPortException("Impossible d'enregistrer le départ, " +
-					"le navire " + idNavire + " n'est pas present dans le port");
+			throw new GestionPortException("Impossible d'enregistrer le départ, " +	"le navire " + idNavire + " n'est pas present dans le port");
 		}
 
 		if (this.naviresEnAttentes.size() > 0) {
-			gererNavireEnAttente(navire);
+			gererNavireAttente(navire);
 		}
-		// Navire navire = this.naviresArrives.get(imoNavire);
-		// this.changementEtatNavire(navire);
 	}
 	
-
-	public void gererNavireEnAttente(Navire navire) {
-		if (navire instanceof Cargo) {
-			gererCargoEnAttente();
-		} else if (navire instanceof Tanker) {
-			gererTankerEnAttente();
+	
+	private void gererNavireAttente(Navire navire) {
+		// on va parcourir la liste des navires en attente jusqu'à 
+		// soit trouver un navire du meme type strict 
+		// ou ne pas trouver de navire du meme type strict
+		// on va recuperer les valeurs de la hashmap dans une lsite
+		
+		int i = 0;
+		
+		Vector<Navire> naviresEnAttente = new Vector<Navire>(this.naviresEnAttentes.values());
+		while (i < this.naviresEnAttentes.size() && !navire.isMemeTypeStrict(naviresEnAttente.get(i))) {
+			i++;
 		}
-
-	}
-
-	public void gererCargoEnAttente() {
-		for (Navire navire : this.naviresEnAttentes.values()) {
-			if (navire instanceof Cargo) {
-				this.naviresEnAttentes.remove(navire.getImo(), navire);
-				gererArriveeNavire(navire);
-			}
+		
+		if (i < this.naviresEnAttentes.size()) {
+			// les navires sont du meme types strict, donc on permutte de navire en attente a navire arrive
+			permutteAttenteArrive(naviresEnAttente.get(i));
 		}
+		
 	}
+	
+	private void permutteAttenteArrive(Navire navire) {
+		gererArriveeNavire(navire);
+		this.naviresEnAttentes.remove(navire.getImo(), navire);
+	}
+	
+	
 
-	public void gererTankerEnAttente() {
-		for (Navire navire : this.naviresEnAttentes.values()) {
-			if (navire instanceof Tanker && navire.getTonnageGT() <= 130000) {
-				this.naviresEnAttentes.remove(navire.getImo(), navire);
-				gererArriveeNavire(navire);
-			}
-			else {
-				gererSuperTankerEnAttente();
-			}
-		}
-	}
+//	private void gererNavireEnAttente(Navire navire) {
+//		if (navire instanceof Cargo) {
+//			System.out.println("dans le if cargo");
+//			gererCargoEnAttente();
+//		} else if (navire instanceof Tanker) {
+//			System.out.println("dans le if tanker");
+//			gererTankerEnAttente();
+//		}
+//		System.out.println("dans gererNavireEnAttente");
+//	}
+//
+//	private void gererCargoEnAttente() {
+//		System.out.println("dans cargo en attente");
+//		for (Navire navire : this.naviresEnAttentes.values()) {
+//			if (navire instanceof Cargo) {
+//				System.out.println("dans if de cargo en attente");
+//				gererArriveeNavire(navire);
+//				this.naviresEnAttentes.remove(navire.getImo(), navire);
+//				//stop
+//			}
+//		}
+//	}
+//
+//	private void gererTankerEnAttente() {
+//		System.out.println("dans tanker EnAttente");
+//		for (Navire navire : this.naviresEnAttentes.values()) {
+//			if (navire instanceof Tanker && navire.getTonnageGT() <= 130000) {
+//				gererArriveeNavire(navire);
+//				System.out.println(Thread.currentThread());
+//				this.naviresEnAttentes.remove(navire.getImo(), navire);
+//			}
+//			else {
+//				gererArriveeNavire(navire);
+//				this.naviresEnAttentes.remove(navire.getImo(), navire);	
+//			}
+//		}
+//	}
 
-	public void gererSuperTankerEnAttente() {
-		for (Navire navire : this.naviresEnAttentes.values()) {
-			if (navire instanceof Tanker) {
-				this.naviresEnAttentes.remove(navire.getImo(), navire);
-				gererArriveeNavire(navire);
-			}
-		}
-	}
+//	public void gererSuperTankerEnAttente() {
+//		for (Navire navire : this.naviresEnAttentes.values()) {
+//			if (navire instanceof Tanker) {
+//				this.naviresEnAttentes.remove(navire.getImo(), navire);
+//				gererArriveeNavire(navire);
+//			}
+//		}
+//	}
 
 
 	@Override
@@ -355,19 +388,19 @@ public class Port implements IStationable {
 		this.nbQuaisPassager = nbQuaisPassager;
 	}
 
-	public HashMap<String, Navire> getNaviresAttendus() {
+	public Map<String, Navire> getNaviresAttendus() {
 		return naviresAttendus;
 	}
 
-	public HashMap<String, Navire> getNaviresArrives() {
+	public Map<String, Navire> getNaviresArrives() {
 		return naviresArrives;
 	}
 
-	public HashMap<String, Navire> getNaviresPartis() {
+	public Map<String, Navire> getNaviresPartis() {
 		return naviresPartis;
 	}
 
-	public HashMap<String, Navire> getNaviresEnAttentes() {
+	public Map<String, Navire> getNaviresEnAttentes() {
 		return naviresEnAttentes;
 	}
 
