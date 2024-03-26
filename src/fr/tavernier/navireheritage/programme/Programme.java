@@ -9,7 +9,6 @@ import fr.tavernier.navireheritage.exceptions.GestionPortException;
 
 public class Programme {
     public static void main(String[] args) throws GestionPortException {
-		System.out.println(Thread.currentThread());
         Port port = new Port("Marseille", "43.2976N", "5.3471E", 2, 3, 2, 4);
         Test.chargementInitial(port);
 
@@ -85,7 +84,6 @@ public class Programme {
         Test.testEnregistrerArriveePrevue(port,superTanker5);
         //Test.testEnregistrerArrivee(port,superTanker5);
         
-        System.out.println("Nb superTanker : " + port.getNbSuperTankers());
         
 
         // croisiere
@@ -104,7 +102,5 @@ public class Programme {
         //Test.testEnregistrerDepart(port, "IMO9197832");
 
         System.out.println(port);
-        
-        System.out.println("Nb superTanker : " + port.getNbSuperTankers());
     }
 }

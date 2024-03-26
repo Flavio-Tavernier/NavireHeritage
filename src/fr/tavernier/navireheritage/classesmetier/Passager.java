@@ -8,8 +8,7 @@ public class Passager {
 	
 	
 	
-	
-	
+
 	public String getNumPasseport() {
 		return numPasseport;
 	}

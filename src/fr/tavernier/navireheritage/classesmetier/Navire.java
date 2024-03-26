@@ -21,7 +21,7 @@ public abstract class Navire {
     }
 
     
-    private boolean isMemeTypeStrict(Navire navire) {
+    public boolean isMemeTypeStrict(Navire navire) {
 		// on va recuperer la classe du navire courant 
     	Class c = this.getClass();
     	if (c.isInstance(navire)) {

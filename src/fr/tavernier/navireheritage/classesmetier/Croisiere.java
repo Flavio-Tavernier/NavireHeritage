@@ -41,12 +41,16 @@ public class Croisiere extends Navire implements ICroiserable {
 	}
 
 
-	public void embarquer(Vector<Object> navire) {
+	
 
+	@Override
+	public void embarquer(Passager passager) {
+		this.passagers.put(passager.getNumPasseport(), passager);
 	}
 
-	public void debarquer(Vector<Object> navire) {
-
+	@Override
+	public void debarquer(Passager passager) {
+		this.passagers.remove(passager.getNumPasseport());
 	}
 
 

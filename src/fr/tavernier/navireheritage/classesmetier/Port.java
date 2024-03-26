@@ -17,10 +17,10 @@ public class Port implements IStationable {
 	private int nbQuaisCroisiere;
 	private int nbQuaisSuperTanker;
 	private int nbQuaisPassager;
-	private Map<String, Navire> naviresAttendus = new ConcurrentHashMap<>();
-	private Map<String, Navire> naviresArrives = new ConcurrentHashMap<>();
-	private Map<String, Navire> naviresPartis = new ConcurrentHashMap<>();
-	private Map<String, Navire> naviresEnAttentes = new ConcurrentHashMap<>();
+	private HashMap<String, Navire> naviresAttendus = new HashMap<>();
+	private HashMap<String, Navire> naviresArrives = new HashMap<>();
+	private HashMap<String, Navire> naviresPartis = new HashMap<>();
+	private HashMap<String, Navire> naviresEnAttentes = new HashMap<>();
 
 	public Port(String nom, String latitude, String longitude, int nbPortique, int nbQuaisCroisiere, int nbQuaisTanker,
 			int nbQuaisSuperTanker) {
@@ -150,12 +150,14 @@ public class Port implements IStationable {
 		Navire navire = ((Navire) vehicule);
 		String imoNavire = navire.getImo();
 
-		if (this.estAttendu(imoNavire) && !this.estPresent(imoNavire)) {
-			this.gererArriveeNavire(navire);
-		} else {
-			throw new GestionPortException("Le navire " + imoNavire + " est deja arrive ou n'est pas attendu");
+		if (this.estPresent(imoNavire)) {
+			throw new GestionPortException("Navire deja present dans le port");
+		}
+		else if (!this.estAttendu(imoNavire)) {
+			this.naviresAttendus.put(imoNavire, navire);
 		}
 
+		this.gererArriveeNavire(navire);
 	}
 
 	public void gererArriveeNavire(Navire navire) {
@@ -254,7 +256,6 @@ public class Port implements IStationable {
 			// les navires sont du meme types strict, donc on permutte de navire en attente a navire arrive
 			permutteAttenteArrive(naviresEnAttente.get(i));
 		}
-		
 	}
 	
 	private void permutteAttenteArrive(Navire navire) {
