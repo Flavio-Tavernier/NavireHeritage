@@ -2,7 +2,7 @@ package fr.tavernier.navireheritage.exceptions;
 
 import java.time.format.DateTimeFormatter;
 
-public class GestionPortException extends Exception {
+public class GestionPortException extends RuntimeException {
 	
 
 	
