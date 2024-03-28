@@ -33,6 +33,11 @@ public class Port implements IStationable {
 		this.nbQuaisSuperTanker = nbQuaisSuperTanker;
 	}
 
+	/**
+	 * réécrit la méthode toString afin d'afficher les informations du port
+	 * @return string formatée
+	 */
+	@Override
 	public String toString() {
 		return "Port de " + this.nom + "\n\tCoordonées GPS : " + this.latitude + " / " + this.longitude
 				+ "\n\tNb portiques : " + this.nbPortique + "\n\tNb quais croisiére : " + this.nbQuaisCroisiere
@@ -53,15 +58,31 @@ public class Port implements IStationable {
 
 	}
 
+	/**
+	 * Ajoute le navire passé en paramètre dans la liste des navires en attente
+	 * @param navire objet navire
+	 */
 	private void ajoutNavireEnAttente(Navire navire) {
 		this.naviresEnAttentes.put(navire.getImo(), navire);
 		this.naviresAttendus.remove(navire.getImo());
 	}
 
+	/**
+	 * @param idNavire string qui est l'imo du navire et représente la clef dans la hashmap
+	 * @return true si l'id de navire passé en paramètre correspond à un objet navire en attente ou
+	 * renvoie false dans le cas contraire
+	 */
 	public boolean estEnAttente(String idNavire) {
 		return this.naviresEnAttentes.containsKey(idNavire);
 	}
 
+
+	/**
+	 * @param idNavire string qui est l'imo du navire et représente la clef dans la hashmap
+	 * @return un objet navire dans le cas ou son id passé en paramètre est présent
+	 * dans la liste des navires en attente
+	 * @throws GestionPortException envoie d'une exception si l'id de navire passé en paramètre est inconnu
+	 */
 	public Navire getUnAttente(String idNavire) throws GestionPortException {
 		if (this.naviresEnAttentes.containsKey(idNavire)) {
 			return this.naviresEnAttentes.get(idNavire);
@@ -70,6 +91,14 @@ public class Port implements IStationable {
 		}
 	}
 
+
+	/**
+	 *
+	 * @param idNavire string qui est l'imo du navire et représente la clef dans la hashmap
+	 * @return un objet navire dans le cas ou son id passé en paramètre est présent
+	 * dans la liste des navires arrivés dans le port
+	 * @throws GestionPortException envoie d'une exception si l'id de navire passé en paramètre est inconnu
+	 */
 	@Override
 	public Navire getUnArrive(String idNavire) throws GestionPortException {
 		if (this.naviresArrives.containsKey(idNavire)) {
@@ -79,6 +108,12 @@ public class Port implements IStationable {
 		}
 	}
 
+	/**
+	 * @param idNavire string qui est l'imo du navire et représente la clef dans la hashmap
+	 * @return un objet navire dans le cas ou son id passé en paramètre est présent
+	 * 	 * dans la liste des navires partis
+	 * @throws GestionPortException envoie d'une exception si l'id de navire passé en paramètre est inconnu
+	 */
 	@Override
 	public Navire getUnParti(String idNavire) throws GestionPortException {
 		if (this.naviresPartis.containsKey(idNavire)) {
@@ -87,7 +122,11 @@ public class Port implements IStationable {
 			throw new GestionPortException("id de navire parti inconnu");
 		}
 	}
-	
+
+
+	/**
+	 * @return le nombre de Navire de type Croisiere present dans le port
+	 */
 	public int getNbCroisieres() {
 		int compteurCroisieres = 0;
 
@@ -98,9 +137,11 @@ public class Port implements IStationable {
 		}
 		return compteurCroisieres;
 	}
-	
-	
 
+
+	/**
+	 * @return le nombre de Navire de type Cargo present dans le port
+	 */
 	public int getNbCargos() {
 		int compteurCargos = 0;
 
@@ -112,6 +153,9 @@ public class Port implements IStationable {
 		return compteurCargos;
 	}
 
+	/**
+	 * @return le nombre de Navire de type Tanker present dans le port
+	 */
 	public int getNbtankers() {
 		int compteurTankers = 0;
 		for (Navire navire : naviresArrives.values()) {
@@ -122,6 +166,9 @@ public class Port implements IStationable {
 		return compteurTankers;
 	}
 
+	/**
+	 * @return le nombre de Navire de type Tanker catégorisé en SuperTanker present dans le port
+	 */
 	public int getNbSuperTankers() {
 		int compteurSuperTankers = 0;
 		for (Navire navire : naviresArrives.values()) {
@@ -132,7 +179,13 @@ public class Port implements IStationable {
 		return compteurSuperTankers;
 	}
 
-	
+
+	/**
+	 * enregistre l'objet passé en paramètre dans la liste des navire attendus dans le port
+	 * @param vehicule - ici, le véhicule sera un bateau
+	 * @throws GestionPortException envoie d'une exception si le navire passé en paramètre
+	 * est déjà preésent dans la liste des navires attentes ou arrivés
+	 */
 	@Override
 	public void enregistrerArriveePrevue(Object vehicule) throws GestionPortException {
 		if (vehicule instanceof Navire) {
@@ -145,6 +198,16 @@ public class Port implements IStationable {
 		}
 	}
 
+	/**
+	 * gère l'arrivée du navire passé en paramètre
+	 * Si le navire passé en paramètre est déjà présent dans le port alors une erreur est envoyée
+	 * Si le navire passé en paramètre n'est pas présent dans la liste des navires attendus alors il est ajouté
+	 * Une fois les conditions précédentes validées, le navire est envoyé dans une méthode qui gèrera
+	 * la suite de la gestion de son arrivée
+	 * @param vehicule - ici, le véhicule sera un bateau
+	 * @throws GestionPortException envoie d'une exception si le navire passé en paramètre est déjà présent
+	 * dans la liste des navire arrivés
+	 */
 	@Override
 	public void enregistrerArrivee(Object vehicule) throws GestionPortException {
 		Navire navire = ((Navire) vehicule);
@@ -160,6 +223,10 @@ public class Port implements IStationable {
 		this.gererArriveeNavire(navire);
 	}
 
+	/**
+	 * vérifie le type de navire passé en paramètre pour continuer la gestion de l'arrivée
+	 * @param navire à faire arriver
+	 */
 	public void gererArriveeNavire(Navire navire) {
 		if (navire instanceof Croisiere) {
 			gererCroisiere(navire);
@@ -168,10 +235,18 @@ public class Port implements IStationable {
 		}
 	}
 
+	/**
+	 * gère l'arrivée des navires de type croisiere
+	 * @param navire à faire arriver
+	 */
 	public void gererCroisiere(Navire navire) {
 		changementEtatNavire(navire);
 	}
 
+	/**
+	 * Différencie le type des navires commercables pour gérer leurs arrivées
+	 * @param navire à faire arriver
+	 */
 	public void gererNavireCommercable(Navire navire) {
 		if (navire instanceof Cargo) {
 			this.gererCargo(navire);
@@ -180,6 +255,11 @@ public class Port implements IStationable {
 		}
 	}
 
+	/**
+	 * Si le nombre de quais accueillant des navires de type Cargo est suffiant,
+	 * gère l'arrivée des navires de type Cargo
+	 * @param navire à faire arriver
+	 */
 	public void gererCargo(Navire navire) {
 		if (this.getNbCargos() < this.nbQuaisTanker) {
 			changementEtatNavire(navire);
@@ -189,6 +269,10 @@ public class Port implements IStationable {
 		}
 	}
 
+	/**
+	 * Différencie la catégorie des navires de type Tanker pour gérer leurs arrivées
+	 * @param navire à faire arriver
+	 */
 	public void gererTypeTanker(Navire navire) {
 		if (navire.getTonnageGT() <= 130000) {
 			this.gererTanker(navire);
@@ -197,6 +281,11 @@ public class Port implements IStationable {
 		}
 	}
 
+	/**
+	 * Si le nombre de quais accueillant des navires de type Tanker est suffiant,
+	 * gère l'arrivée des navires de type Tanker
+	 * @param navire à faire arriver
+	 */
 	public void gererTanker(Navire navire) {
 		if (this.getNbtankers() < this.nbQuaisTanker) {
 			changementEtatNavire(navire);
@@ -206,6 +295,12 @@ public class Port implements IStationable {
 		}
 	}
 
+
+	/**
+	 * Si le nombre de quais accueillant des navires de type Tanker catégorie SuperTanker est suffiant,
+	 * gère l'arrivée des navires de type Tanker catégorie SuperTanker
+	 * @param navire à faire arriver
+	 */
 	public void gererSuperTanker(Navire navire) {
 		if (this.getNbSuperTankers() < this.nbQuaisSuperTanker) {
 			changementEtatNavire(navire);
@@ -215,14 +310,28 @@ public class Port implements IStationable {
 		}
 	}
 
+	/**
+	 * permet de retirer le navire passé en paramètre de la liste des navires attendus
+	 * et d'ajouter ce même navire dans la liste des navires arrivés
+	 * @param navire à faire arriver
+	 */
 	public void changementEtatNavire(Navire navire) {
 		this.naviresAttendus.remove(navire.getImo());
 		this.naviresArrives.put(navire.getImo(), navire);
 	}
 
-	
-	
-	
+
+
+	/**
+	 * gère le départ du navire passé en paramètre
+	 * Si l'id du navire passé en paramètre est présent dans la port alors ce même navire est retiré de
+	 * la liste des navires présents et ajouter dans la liste des navires partis.
+	 * Sinon une exception est envoyée
+	 * Afin de les gérer, vérifie si des objets Navire sont présents dans la liste des navires en attentes
+	 * @param idNavire - id du navire à faire partir
+	 * @throws GestionPortException envoie d'une exception si le navire passé en paramètre n'est pas présent
+	 * dans la liste des navire arrivés
+	 */
 	@Override
 	public void enregistrerDepart(String idNavire) throws GestionPortException {
 		Navire navire = this.naviresArrives.get(idNavire);
@@ -237,8 +346,16 @@ public class Port implements IStationable {
 			gererNavireAttente(navire);
 		}
 	}
-	
-	
+
+
+	/**
+	 * gère les navires présent dans la liste des navires en attentes
+	 * boucle les navires présents dans la liste des navires en attente pour savoir si le navire
+	 * passé en paramètre (qui est parti) est du même type qu'un des navires de la liste des navires en attente
+	 * Si le navire passé en paramètre et un des navires contenu dans la liste des navires en attente sont
+	 * du même type strict alors, on fait appel à une méthode pour permutter son état
+	 * @param navire - navire qui vient de partir
+	 */
 	private void gererNavireAttente(Navire navire) {
 		// on va parcourir la liste des navires en attente jusqu'à 
 		// soit trouver un navire du meme type strict 
@@ -251,83 +368,60 @@ public class Port implements IStationable {
 		while (i < this.naviresEnAttentes.size() && !navire.isMemeTypeStrict(naviresEnAttente.get(i))) {
 			i++;
 		}
-		
+
 		if (i < this.naviresEnAttentes.size()) {
 			// les navires sont du meme types strict, donc on permutte de navire en attente a navire arrive
 			permutteAttenteArrive(naviresEnAttente.get(i));
 		}
 	}
-	
+
+
+	/**
+	 * gère l'arrivée du navire et le retire de la liste des navires en attente
+	 * @param navire - navire que l'on souhaite permutter
+	 */
 	private void permutteAttenteArrive(Navire navire) {
 		gererArriveeNavire(navire);
 		this.naviresEnAttentes.remove(navire.getImo(), navire);
 	}
-	
-	
-
-//	private void gererNavireEnAttente(Navire navire) {
-//		if (navire instanceof Cargo) {
-//			System.out.println("dans le if cargo");
-//			gererCargoEnAttente();
-//		} else if (navire instanceof Tanker) {
-//			System.out.println("dans le if tanker");
-//			gererTankerEnAttente();
-//		}
-//		System.out.println("dans gererNavireEnAttente");
-//	}
-//
-//	private void gererCargoEnAttente() {
-//		System.out.println("dans cargo en attente");
-//		for (Navire navire : this.naviresEnAttentes.values()) {
-//			if (navire instanceof Cargo) {
-//				System.out.println("dans if de cargo en attente");
-//				gererArriveeNavire(navire);
-//				this.naviresEnAttentes.remove(navire.getImo(), navire);
-//				//stop
-//			}
-//		}
-//	}
-//
-//	private void gererTankerEnAttente() {
-//		System.out.println("dans tanker EnAttente");
-//		for (Navire navire : this.naviresEnAttentes.values()) {
-//			if (navire instanceof Tanker && navire.getTonnageGT() <= 130000) {
-//				gererArriveeNavire(navire);
-//				System.out.println(Thread.currentThread());
-//				this.naviresEnAttentes.remove(navire.getImo(), navire);
-//			}
-//			else {
-//				gererArriveeNavire(navire);
-//				this.naviresEnAttentes.remove(navire.getImo(), navire);	
-//			}
-//		}
-//	}
-
-//	public void gererSuperTankerEnAttente() {
-//		for (Navire navire : this.naviresEnAttentes.values()) {
-//			if (navire instanceof Tanker) {
-//				this.naviresEnAttentes.remove(navire.getImo(), navire);
-//				gererArriveeNavire(navire);
-//			}
-//		}
-//	}
 
 
+	/**
+	 * @param idNavire - id du navire à faire partir
+	 * @return true si l'id du navire passé en paramètre est présent dans la liste des navires attendus
+	 * sinon renvoie false
+	 */
 	@Override
 	public boolean estAttendu(String idNavire) {
 		return this.naviresAttendus.containsKey(idNavire);
 	}
 
+	/**
+	 * @param idNavire - id du navire à faire partir
+	 * @return true si l'id du navire passé en paramètre est présent dans la liste des navires présents
+	 * sinon renvoie false
+	 */
 	@Override
 	public boolean estPresent(String idNavire) {
 		return this.naviresArrives.containsKey(idNavire);
 	}
 
+	/**
+	 * @param idNavire - id du navire à faire partir
+	 * @return true si l'id du navire passé en paramètre est présent dans la liste des navires partis
+	 * sinon renvoie false
+	 */
 	@Override
 	public boolean estParti(String idNavire) {
 		return this.naviresPartis.containsKey(idNavire);
 	}
 
+
+	/**
+	 * @param idNavire - id du navire à faire partir
+	 * @return l'objet du navire dont l'id est passé en paramètre s'il est présent dans la liste des navires
+	 * attendus sinon envoie une erreur
+	 */
 	@Override
 	public Object getUnAttendu(String idNavire) throws GestionPortException {
 		if (this.estAttendu(idNavire)) {
@@ -336,6 +430,11 @@ public class Port implements IStationable {
 			throw new GestionPortException("Le navire " + idNavire + " n'est pas dans la liste des attendus");
 		}
 	}
+
+
+	/**
+	 * getters et setters de la classe Port
+	 */
 
 	public String getNom() {
 		return nom;
