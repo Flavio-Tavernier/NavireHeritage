@@ -22,6 +22,17 @@ public class Port implements IStationable {
 	private HashMap<String, Navire> naviresPartis = new HashMap<>();
 	private HashMap<String, Navire> naviresEnAttentes = new HashMap<>();
 
+
+	/**
+	 * Constructeur de la classe Port
+	 * @param nom du port
+	 * @param latitude du port
+	 * @param longitude du port
+	 * @param nbPortique du port
+	 * @param nbQuaisCroisiere du port
+	 * @param nbQuaisTanker du port
+	 * @param nbQuaisSuperTanker du port
+	 */
 	public Port(String nom, String latitude, String longitude, int nbPortique, int nbQuaisCroisiere, int nbQuaisTanker,
 			int nbQuaisSuperTanker) {
 		this.nom = nom;
@@ -432,74 +443,130 @@ public class Port implements IStationable {
 	}
 
 
-	/**
-	 * getters et setters de la classe Port
-	 */
 
+
+	/**
+	 * @return le nom du port
+	 */
 	public String getNom() {
 		return nom;
 	}
 
+	/**
+	 * permet de définir le nom du port
+	 * @param nom du port
+	 */
 	public void setNom(String nom) {
 		this.nom = nom;
 	}
 
+	/**
+	 * @return la latitude du port
+	 */
 	public String getLatitude() {
 		return latitude;
 	}
 
+	/**
+	 * @return la longitude du port
+	 */
 	public String getLongitude() {
 		return longitude;
 	}
 
+	/**
+	 * @return le nombre de portique du port
+	 */
 	public int getNbPortique() {
 		return nbPortique;
 	}
 
+	/**
+	 * permet de définir le nombre de portique du port
+	 * @param nbPortique du port
+	 */
 	public void setNbPortique(int nbPortique) {
 		this.nbPortique = nbPortique;
 	}
 
+	/**
+	 * @return le nombre de quais pouvant accueillir des navire de type Tanker
+	 */
 	public int getNbQuaisTanker() {
 		return nbQuaisTanker;
 	}
 
+	/**
+	 * @return le nombre de quais pouvant accueillir des navire de type Croisiere
+	 */
 	public int getNbQuaisCroisiere() {
 		return nbQuaisCroisiere;
 	}
 
+
+	/**
+	 * permet de définir le nomnre de quais pouvant accueillir des navires de type Croisiere
+	 * @param nbQuaisCroisiere du port
+	 */
 	public void setNbQuaisCroisiere(int nbQuaisCroisiere) {
 		this.nbQuaisCroisiere = nbQuaisCroisiere;
 	}
 
+	/**
+	 * @return le nombre de quais pouvant accueillir des navires de type Tanker catégorisés en SuperTanker
+	 */
 	public int getNbQuaisSuperTanker() {
 		return nbQuaisSuperTanker;
 	}
 
+	/**
+	 * permet de définir le nombre de quais pouvant accueillir des navires de type Tanker catégorisés en SuperTanker
+	 * @param nbQuaisSuperTanker du port
+	 */
 	public void setNbQuaisSuperTanker(int nbQuaisSuperTanker) {
 		this.nbQuaisSuperTanker = nbQuaisSuperTanker;
 	}
 
+	/**
+	 * @return le nombre de quais pouvant accueillir des passagers
+	 */
 	public int getNbQuaisPassager() {
 		return nbQuaisPassager;
 	}
 
+
+	/**
+	 * permet de définir le nombre de quais pouvant accueillir des passagers
+	 * @param nbQuaisPassager du port
+	 */
 	public void setNbQuaisPassager(int nbQuaisPassager) {
 		this.nbQuaisPassager = nbQuaisPassager;
 	}
 
+	/**
+	 * @return le HashMap contenant les navires attendus
+	 */
 	public Map<String, Navire> getNaviresAttendus() {
 		return naviresAttendus;
 	}
 
+	/**
+	 * @return le HashMap contenant les navires arrivés
+	 */
 	public Map<String, Navire> getNaviresArrives() {
 		return naviresArrives;
 	}
 
+	/**
+	 * @return le HashMap contenant les navires partis
+	 */
 	public Map<String, Navire> getNaviresPartis() {
 		return naviresPartis;
 	}
 
+	/**
+	 * @return le HashMap contenant les navires en attentes
+	 */
 	public Map<String, Navire> getNaviresEnAttentes() {
 		return naviresEnAttentes;
 	}
